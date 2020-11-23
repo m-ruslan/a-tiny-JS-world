@@ -7,7 +7,44 @@
 
 // ======== OBJECTS DEFINITIONS ========
 // Define your objects here
+let dog = {
+  type: "animal",
+  legs: 4,
+  name: "Ghost",
+  saying: "bark",
+  friendTo: ["Monica", "Tom", "Everybody"],
+};
+let cat = {
+  type: "animal",
+  legs: 4,
+  name: "Tom",
+  saying: "meow",
+  friendTo: ["Monica", "Chandler", "Everyone who feeds"],
+};
+let woman = {
+  type: "human",
+  legs: 2,
+  hands: 2,
+  name: "Monica",
+  saying: "Hello",
+  friendTo: ["Chandler", "Ghost"],
+};
+let man = {
+  type: "human",
+  legs: 2,
+  hands: 2,
+  name: "Chandler",
+  saying: "Hi",
+  friendTo: ["Monica", "Tom"],
+};
 
+let makeMassege = (obj) =>
+  `${obj.type}; ${obj.legs}; ${obj.hands}; ${obj.name}; ${
+    obj.saying
+  }; ${obj.friendTo.join(",")}`;
+
+let world = [dog, cat, woman, man];
+world.forEach((e) => print(makeMassege(e)));
 
 // ======== OUTPUT ========
 /* Use print(message) for output.
@@ -27,5 +64,3 @@
    print('human; <strong>John</strong>; male; 2; 2; <em>Hello world!</em>; Rex, Tom, Jenny');
    print('human; <strong>John</strong>; male; 2; 2; <em>Hello world!</em>; Rex, Tom, Jenny', 'div');
    */
-
-

@@ -38,14 +38,6 @@ let man = {
   friendTo: ["Monica", "Tom"],
 };
 
-let makeMassege = (obj) =>
-  `${obj.type}; ${obj.legs}; ${obj.hands}; ${obj.name}; ${
-    obj.saying
-  }; ${obj.friendTo.join(",")}`;
-
-let world = [dog, cat, woman, man];
-world.forEach((e) => print(makeMassege(e)));
-
 // ======== OUTPUT ========
 /* Use print(message) for output.
    Default tag for message is <pre>. Use print(message,'div') to change containing element tag.
@@ -54,6 +46,14 @@ world.forEach((e) => print(makeMassege(e)));
    However, please, REFRAIN from improving visuals at least until your code is reviewed
    so code reviewers might focus on a single file that is index.js.
    */
+
+let makeMassege = (obj) =>
+  `${obj.type}; ${obj.legs}; ${obj.hands}; ${obj.name}; ${
+    obj.saying
+  }; ${obj.friendTo.join(",")}`;
+
+let world = [dog, cat, woman, man];
+world.forEach((e) => print(makeMassege(e)));
 
 /* Print examples:
    print('ABC');

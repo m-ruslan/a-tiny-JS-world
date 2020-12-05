@@ -7,36 +7,76 @@
 
 // ======== OBJECTS DEFINITIONS ========
 // Define your objects here
-let dog = {
-  type: "animal",
-  legs: 4,
-  name: "Ghost",
-  saying: "bark",
-  friendTo: ["Monica", "Tom", "Everybody"],
+
+let Inhabitant = function (name, gender, saying, friendTo) {
+  this.name = name;
+  this.gender = gender;
+  this.saying = saying;
+  this.friendTo = friendTo;
 };
-let cat = {
-  type: "animal",
-  legs: 4,
-  name: "Tom",
-  saying: "meow",
-  friendTo: ["Monica", "Chandler", "Everyone who feeds"],
+
+let Human = function (name, gender, saying, friendTo) {
+  Inhabitant.call(this, name, gender, saying, friendTo);
 };
-let woman = {
-  type: "human",
-  legs: 2,
-  hands: 2,
-  name: "Monica",
-  saying: "Hello",
-  friendTo: ["Chandler", "Ghost"],
+Human.prototype = Object.create(Inhabitant.prototype);
+Human.prototype.constructor = Human;
+Human.prototype.hands = "2 hands";
+Human.prototype.legs = "2 legs";
+Human.prototype.type = "human";
+
+let Man = function (name, saying, friendTo) {
+  Human.call(this, name, this.gender, saying, friendTo);
 };
-let man = {
-  type: "human",
-  legs: 2,
-  hands: 2,
-  name: "Chandler",
-  saying: "Hi",
-  friendTo: ["Monica", "Tom"],
+Man.prototype = Object.create(Human.prototype);
+Man.prototype.constructor = Man;
+Man.prototype.gender = "male";
+
+let Woman = function (name, saying, friendTo) {
+  Human.call(this, name, this.gender, saying, friendTo);
 };
+Woman.prototype = Object.create(Human.prototype);
+Woman.prototype.constructor = Woman;
+Woman.prototype.gender = "female";
+
+let Pet = function (name, gender, saying, friendTo) {
+  Inhabitant.call(this, name, gender, saying, friendTo);
+};
+Pet.prototype = Object.create(Inhabitant.prototype);
+Pet.prototype.constructor = Pet;
+Pet.prototype.type = "pet";
+
+let Dog = function (name, gender, friendTo) {
+  Pet.call(this, name, gender, this.saying, friendTo);
+};
+Dog.prototype = Object.create(Pet.prototype);
+Dog.prototype.constructor = Dog;
+Dog.prototype.legs = "4 legs";
+Dog.prototype.tail = "1 tail";
+Dog.prototype.type = Dog.prototype.type + ": " + "dog";
+Dog.prototype.saying = "Bark";
+
+let Cat = function (name, gender, friendTo) {
+  Pet.call(this, name, gender, this.saying, friendTo);
+};
+Cat.prototype = Object.create(Pet.prototype);
+Cat.prototype.constructor = Cat;
+Cat.prototype.legs = "4 legs";
+Cat.prototype.tail = "1 tail";
+Cat.prototype.type = Cat.prototype.type + ": " + "cat";
+Cat.prototype.saying = "Meow";
+
+let dog = new Dog("Ghost", "male", ["Monica", "Tom", "Everybody"]);
+let cat = new Cat("Tom", "male", ["Monica", "Chandler", "Everyone who feeds"]);
+let woman = new Woman("Monica", "Hello", ["Chandler", "Ghost"]);
+let man = new Man("Chandler", "Hi", ["Monica", "Tom"]);
+
+let catWoman = new Cat("Cat-woman", "female", [
+  "Chandler dressed as a Pink Bunny",
+]);
+catWoman.legs = "2 legs";
+catWoman.hands = "2 hands";
+catWoman.tail = "1 cat-woman's tail";
+catWoman.type = "super-hero";
 
 // ======== OUTPUT ========
 /* Use print(message) for output.
@@ -47,12 +87,17 @@ let man = {
    so code reviewers might focus on a single file that is index.js.
    */
 
-let makeMessage = (obj) =>
-  Object.keys(obj)
-    .map((propName) => obj[propName])
-    .join("; ");
+let makeMessage = (obj) => {
+  let propsArr = [];
+  for (let propName in obj) {
+    propName !== "constructor"
+      ? propsArr.push(propName)
+      : console.log("constructor found");
+  }
+  return propsArr.map((propName) => obj[propName]).join("; ");
+};
 
-let world = [dog, cat, woman, man];
+let world = [dog, cat, woman, man, catWoman];
 world.forEach((inhabitant) => print(makeMessage(inhabitant)));
 
 /* Print examples:

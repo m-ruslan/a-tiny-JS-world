@@ -8,6 +8,7 @@
 // ======== OBJECTS DEFINITIONS ========
 // Define your objects here
 
+//**ES6 classes and sub-classes
 class Inhabitant {
   constructor(name, friendTo, gender) {
     this.name = name;
@@ -24,10 +25,6 @@ class Human extends Inhabitant {
     this.type = "human";
   }
 }
-
-// const sayingHi = (state) => ({
-//   saying: () => `Hi, I'm ${state.name}`,
-// });
 
 class Man extends Human {
   constructor(name, friendTo, gender = "male") {
@@ -68,31 +65,41 @@ class Dog extends Pet {
   }
 }
 
-class Cat extends Pet {
-  constructor(name, friendTo, gender) {
-    super(name, friendTo, gender);
-    this.legs = 4;
-    this.type = this.type + ": " + "cat";
-  }
+//**classes built employing composition
+const sayingMoew = (state) => ({
+  saying: () => `Meow, I'm ${state.name}`,
+});
 
-  saying() {
-    return `Moew, I'm ${this.name}`;
-  }
-}
+const Cat = (name, friendTo, gender) => {
+  let state = {
+    name,
+    friendTo,
+    gender,
+    type: "pet: cat",
+    legs: 4,
+  };
+  return Object.assign(state, sayingMoew(state));
+};
 
+const CatWoman = (name, friendTo, gender) => {
+  let state = {
+    name,
+    friendTo,
+    gender,
+    type: "super-hero",
+    legs: 2,
+    hands: 2,
+  };
+  return Object.assign(state, sayingMoew(state));
+};
+
+//**objects creation based on classes
 const dog = new Dog("Ghost", ["Monica", "Tom", "Everybody"], "male");
-const cat = new Cat(
-  "Tom",
-  ["Monica", "Chandler", "Everyone who feeds"],
-  "male"
-);
 const woman = new Woman("Monica", ["Chandler", "Ghost"]);
 const man = new Man("Chandler", ["Monica", "Tom"]);
 
-const catWoman = new Cat("Cat-woman", "female", ["Chandler"]);
-catWoman.legs = 2;
-catWoman.hands = 2;
-catWoman.type = "super-hero";
+const cat = Cat("Tom", ["Monica", "Chandler", "Everyone who feeds"], "male");
+const catWoman = CatWoman("Cat-woman", "female", ["Chandler"]);
 
 // ======== OUTPUT ========
 /* Use print(message) for output.
@@ -112,7 +119,7 @@ const makeMessage = (obj) =>
         ? `${propName}: ${obj[propName]()}`
         : `${propName}: ${obj[propName]}`
     )
-    // .filter((prop) => prop !== "none")
+    .filter((prop) => prop !== "none")
     .join(";\n");
 
 const world = [dog, cat, woman, man, catWoman];

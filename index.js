@@ -10,16 +10,22 @@
 
 //**ES6 classes and sub-classes
 class Inhabitant {
-  constructor(name, friendTo, gender) {
+  constructor(name, gender) {
     this.name = name;
     this.gender = gender;
-    this.friendTo = friendTo;
+    this.friendTo = [];
+  }
+
+  addFriends(arr) {
+    this.friendTo = this.friendTo.concat(
+      arr.map((inhhabitant) => inhhabitant.name)
+    );
   }
 }
 
 class Human extends Inhabitant {
-  constructor(name, friendTo, gender) {
-    super(name, friendTo, gender);
+  constructor(name, gender) {
+    super(name, gender);
     this.hands = 2;
     this.legs = 2;
     this.type = "human";
@@ -27,8 +33,8 @@ class Human extends Inhabitant {
 }
 
 class Man extends Human {
-  constructor(name, friendTo, gender = "male") {
-    super(name, friendTo, gender);
+  constructor(name, gender = "male") {
+    super(name, gender);
   }
 
   saying() {
@@ -37,8 +43,8 @@ class Man extends Human {
 }
 
 class Woman extends Human {
-  constructor(name, friendTo, gender = "female") {
-    super(name, friendTo, gender);
+  constructor(name, gender = "female") {
+    super(name, gender);
   }
 
   saying() {
@@ -47,15 +53,15 @@ class Woman extends Human {
 }
 
 class Pet extends Inhabitant {
-  constructor(name, friendTo, gender) {
-    super(name, friendTo, gender);
+  constructor(name, gender) {
+    super(name, gender);
     this.type = "pet";
   }
 }
 
 class Dog extends Pet {
-  constructor(name, friendTo, gender) {
-    super(name, friendTo, gender);
+  constructor(name, gender) {
+    super(name, gender);
     this.legs = 4;
     this.type = this.type + ": " + "dog";
   }
@@ -70,36 +76,51 @@ const sayingMoew = (state) => ({
   saying: () => `Meow, I'm ${state.name}`,
 });
 
-const Cat = (name, friendTo, gender) => {
+const addFriends = (state) => ({
+  addFriends: (arr) =>
+    (state.friendTo = state.friendTo.concat(
+      arr.map((inhhabitant) => inhhabitant.name)
+    )),
+});
+
+const Cat = (name, gender) => {
   let state = {
     name,
-    friendTo,
+    friendTo: [],
     gender,
     type: "pet: cat",
     legs: 4,
   };
-  return Object.assign(state, sayingMoew(state));
+  return Object.assign(state, sayingMoew(state), addFriends(state));
 };
 
-const CatWoman = (name, friendTo, gender) => {
+const CatWoman = (name, gender) => {
   let state = {
     name,
-    friendTo,
+    friendTo: [],
     gender,
     type: "super-hero",
     legs: 2,
     hands: 2,
   };
-  return Object.assign(state, sayingMoew(state));
+  return Object.assign(state, sayingMoew(state), addFriends(state));
 };
 
 //**objects creation based on classes
-const dog = new Dog("Ghost", ["Monica", "Tom", "Everybody"], "male");
-const woman = new Woman("Monica", ["Chandler", "Ghost"]);
-const man = new Man("Chandler", ["Monica", "Tom"]);
+const dog = new Dog("Ghost", "male");
+const woman = new Woman("Monica");
+const man = new Man("Chandler");
 
-const cat = Cat("Tom", ["Monica", "Chandler", "Everyone who feeds"], "male");
-const catWoman = CatWoman("Cat-woman", "female", ["Chandler"]);
+const cat = Cat("Tom", "male");
+const catWoman = CatWoman("Cat-woman", "female");
+
+const friendList = [
+  { target: dog, friends: [man, woman] },
+  { target: man, friends: [woman, cat] },
+  { target: woman, friends: [dog, man, cat] },
+  { target: cat, friends: [dog, man, woman] },
+  { target: catWoman, friends: [man, cat] },
+].forEach(({ target, friends }) => target.addFriends(friends));
 
 // ======== OUTPUT ========
 /* Use print(message) for output.

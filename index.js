@@ -10,31 +10,51 @@
 
 //**ES6 classes and sub-classes
 class Inhabitant {
-  constructor(name, gender) {
+  constructor(name, legs, gender, propNamesArr) {
     this.name = name;
     this.gender = gender;
+    this.legs = legs;
     this.friendTo = [];
+    this.propNamesArr = propNamesArr;
   }
 
-  addFriends(arr) {
+  addFriends(friendsArr) {
     this.friendTo = this.friendTo.concat(
-      arr.map((inhhabitant) => inhhabitant.name)
+      friendsArr.map((inhhabitant) => inhhabitant.name)
     );
+  }
+
+  makeMessage() {
+    return this.propNamesArr
+      .map((propName) =>
+        typeof this[propName] === "function"
+          ? `${propName}: ${this[propName]()}`
+          : `${propName}: ${this[propName]}`
+      )
+      .join(";\n");
   }
 }
 
 class Human extends Inhabitant {
-  constructor(name, gender) {
-    super(name, gender);
-    this.hands = 2;
-    this.legs = 2;
-    this.type = "human";
+  constructor(name, legs, hands, gender) {
+    const propNamesArr = [
+      "species",
+      "name",
+      "saying",
+      "gender",
+      "legs",
+      "hands",
+      "friendTo",
+    ];
+    super(name, legs, gender, propNamesArr);
+    this.hands = hands;
+    this.species = "human";
   }
 }
 
 class Man extends Human {
-  constructor(name, gender = "male") {
-    super(name, gender);
+  constructor(name, legs, hands, gender = "male") {
+    super(name, legs, hands, gender);
   }
 
   saying() {
@@ -43,8 +63,8 @@ class Man extends Human {
 }
 
 class Woman extends Human {
-  constructor(name, gender = "female") {
-    super(name, gender);
+  constructor(name, legs, hands, gender = "female") {
+    super(name, legs, hands, gender);
   }
 
   saying() {
@@ -53,17 +73,23 @@ class Woman extends Human {
 }
 
 class Pet extends Inhabitant {
-  constructor(name, gender) {
-    super(name, gender);
-    this.type = "pet";
+  constructor(name, legs, gender) {
+    const propNamesArr = [
+      "species",
+      "name",
+      "saying",
+      "gender",
+      "legs",
+      "friendTo",
+    ];
+    super(name, legs, gender, propNamesArr);
   }
 }
 
 class Dog extends Pet {
-  constructor(name, gender) {
-    super(name, gender);
-    this.legs = 4;
-    this.type = this.type + ": " + "dog";
+  constructor(name, legs, gender) {
+    super(name, legs, gender);
+    this.species = "dog";
   }
 
   saying() {
@@ -77,42 +103,73 @@ const sayingMoew = (state) => ({
 });
 
 const addFriends = (state) => ({
-  addFriends: (arr) =>
+  addFriends: (friendsArr) =>
     (state.friendTo = state.friendTo.concat(
-      arr.map((inhhabitant) => inhhabitant.name)
+      friendsArr.map((inhhabitant) => inhhabitant.name)
     )),
 });
 
-const Cat = (name, gender) => {
+const makeMessage = (state) => ({
+  makeMessage: () =>
+    state.propNamesArr
+      .map((propName) =>
+        typeof state[propName] === "function"
+          ? `${propName}: ${state[propName]()}`
+          : `${propName}: ${state[propName]}`
+      )
+      .join(";\n"),
+});
+
+const Cat = (name, legs, gender) => {
   let state = {
     name,
     friendTo: [],
     gender,
-    type: "pet: cat",
-    legs: 4,
+    species: "cat",
+    legs,
+    propNamesArr: ["species", "name", "saying", "gender", "legs", "friendTo"],
   };
-  return Object.assign(state, sayingMoew(state), addFriends(state));
+  return Object.assign(
+    state,
+    sayingMoew(state),
+    addFriends(state),
+    makeMessage(state)
+  );
 };
 
-const CatWoman = (name, gender) => {
+const CatWoman = (name, legs, hands, gender = "female") => {
   let state = {
     name,
     friendTo: [],
     gender,
-    type: "super-hero",
-    legs: 2,
-    hands: 2,
+    species: "catwoman",
+    legs,
+    hands,
+    propNamesArr: [
+      "species",
+      "name",
+      "saying",
+      "gender",
+      "legs",
+      "hands",
+      "friendTo",
+    ],
   };
-  return Object.assign(state, sayingMoew(state), addFriends(state));
+  return Object.assign(
+    state,
+    sayingMoew(state),
+    addFriends(state),
+    makeMessage(state)
+  );
 };
 
 //**objects creation based on classes
-const dog = new Dog("Ghost", "male");
-const woman = new Woman("Monica");
-const man = new Man("Chandler");
+const dog = new Dog("Ghost", 4, "male");
+const woman = new Woman("Monica", 2, 2);
+const man = new Man("Chandler", 2, 2);
 
-const cat = Cat("Tom", "male");
-const catWoman = CatWoman("Cat-woman", "female");
+const cat = Cat("Tom", 4, "male");
+const catWoman = CatWoman("Cat-woman", 2, 2);
 
 const friendList = [
   { target: dog, friends: [man, woman] },
@@ -131,27 +188,5 @@ const friendList = [
    so code reviewers might focus on a single file that is index.js.
    */
 
-const makeMessage = (obj) =>
-  ["type", "name", "saying", "gender", "legs", "hands", "friendTo"]
-    .map((propName) =>
-      obj[propName] === undefined
-        ? "none"
-        : typeof obj[propName] === "function"
-        ? `${propName}: ${obj[propName]()}`
-        : `${propName}: ${obj[propName]}`
-    )
-    .filter((prop) => prop !== "none")
-    .join(";\n");
-
 const world = [dog, cat, woman, man, catWoman];
-world.forEach((inhabitant) => print(makeMessage(inhabitant)));
-
-/* Print examples:
-   print('ABC');
-   print('<strong>ABC</strong>');
-   print('<strong>ABC</strong>', 'div');
-
-   print('human; John; male; 2; 2; Hello world!; Rex, Tom, Jenny');
-   print('human; <strong>John</strong>; male; 2; 2; <em>Hello world!</em>; Rex, Tom, Jenny');
-   print('human; <strong>John</strong>; male; 2; 2; <em>Hello world!</em>; Rex, Tom, Jenny', 'div');
-   */
+world.forEach((inhabitant) => print(inhabitant.makeMessage()));
